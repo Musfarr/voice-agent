@@ -1,0 +1,281 @@
+{
+	"info": {
+		"_postman_id": "1800066d-da25-4bf6-a355-2591dc9c2fa6",
+		"name": "Call Agent Dashboard API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23789289",
+		"_collection_link": "https://orange-shadow-939846.postman.co/workspace/My-Workspace~e55a02ef-1b50-4f28-8428-4a848d22b167/collection/23789289-1800066d-da25-4bf6-a355-2591dc9c2fa6?action=share&source=collection_link&creator=23789289"
+	},
+	"item": [
+		{
+			"name": "Dashboard Analytics",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseurl}}api/analytics/dashboard?start_date=2025-12-01&end_date=2025-12-03",
+					"host": [
+						"{{baseurl}}api"
+					],
+					"path": [
+						"analytics",
+						"dashboard"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2025-12-01",
+							"description": "Optional / Filter "
+						},
+						{
+							"key": "end_date",
+							"value": "2025-12-03",
+							"description": "Optional/ Filter"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Call Volume",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseurl}}api/analytics/call-volume?days=7",
+					"host": [
+						"{{baseurl}}api"
+					],
+					"path": [
+						"analytics",
+						"call-volume"
+					],
+					"query": [
+						{
+							"key": "days",
+							"value": "7",
+							"description": "Optional / Filter  if not provided then by default 15 days "
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hourly Analytics",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseurl}}api/analytics/hourly",
+					"host": [
+						"{{baseurl}}api"
+					],
+					"path": [
+						"analytics",
+						"hourly"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filters",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseurl}}api/filters",
+					"host": [
+						"{{baseurl}}api"
+					],
+					"path": [
+						"filters"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lead Data Table",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseurl}}api/data/leads?status=contacted&industry_type=IT&organization=Lucky Motors&limit=10000&skip=0",
+					"host": [
+						"{{baseurl}}api"
+					],
+					"path": [
+						"data",
+						"leads"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "contacted",
+							"description": "Optional / Filter by lead status"
+						},
+						{
+							"key": "industry_type",
+							"value": "IT",
+							"description": "Optional/ Filter by "
+						},
+						{
+							"key": "organization",
+							"value": "Lucky Motors",
+							"description": "Optional/ Filter by "
+						},
+						{
+							"key": "limit",
+							"value": "10000",
+							"description": "Number of records to return Optional"
+						},
+						{
+							"key": "skip",
+							"value": "0",
+							"description": "Number of records to skip Optional"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Issues Data Table",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseurl}}api/data/issues?status=closed&industry_type=IT&organization=Lucky Motors&limit=10000&skip=0",
+					"host": [
+						"{{baseurl}}api"
+					],
+					"path": [
+						"data",
+						"issues"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "closed",
+							"description": "Optional / Filter by issue status"
+						},
+						{
+							"key": "industry_type",
+							"value": "IT",
+							"description": "Optional/ Filter by "
+						},
+						{
+							"key": "organization",
+							"value": "Lucky Motors",
+							"description": "Optional/ Filter by "
+						},
+						{
+							"key": "limit",
+							"value": "10000",
+							"description": "Number of records to return Optional"
+						},
+						{
+							"key": "skip",
+							"value": "0",
+							"description": "Number of records to skip Optional"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": ""
+		}
+	]
+}

@@ -41,6 +41,7 @@ export default function CallLogTable() {
   const total = activeTab === 'leads' ? leadsResponse?.data?.total : issuesResponse?.data?.total;
   const isLoading = activeTab === 'leads' ? leadsLoading : issuesLoading;
   const isAnyLoading = filtersLoading || isLoading;
+  const isControlsDisabled = filtersLoading;
 
   const currentPage = Math.floor(skip / limit) + 1;
   const totalPages = total ? Math.max(1, Math.ceil(total / limit)) : 1;
@@ -83,7 +84,7 @@ export default function CallLogTable() {
           <div className="d-flex align-items-center gap-2">
             <i className="bi bi-funnel"></i>
             <span className="fw-medium">Filters</span>
-            <button className="btn btn-sm btn-outline-secondary" onClick={clearFilters} disabled={isAnyLoading}>
+            <button className="btn btn-sm btn-outline-secondary" onClick={clearFilters} disabled={isControlsDisabled}>
               Clear
             </button>
           </div>
@@ -93,7 +94,7 @@ export default function CallLogTable() {
             style={{ width: 'auto' }}
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           >
             <option value="">{activeTab === 'leads' ? 'Lead status' : 'Issue status'}</option>
             {(activeTab === 'leads'
@@ -111,7 +112,7 @@ export default function CallLogTable() {
             style={{ width: 'auto' }}
             value={filters.industry_type}
             onChange={(e) => handleFilterChange('industry_type', e.target.value)}
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           >
             <option value="">Industry</option>
             {(filterOptions?.industries || []).map((industry) => (
@@ -126,7 +127,7 @@ export default function CallLogTable() {
             style={{ width: 'auto' }}
             value={filters.organization}
             onChange={(e) => handleFilterChange('organization', e.target.value)}
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           >
             <option value="">Organization</option>
             {(filterOptions?.organizations || []).map((org) => (
@@ -143,7 +144,7 @@ export default function CallLogTable() {
             value={filters.start_date}
             onChange={(e) => handleFilterChange('start_date', e.target.value)}
             placeholder="Start date"
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           />
 
           <input
@@ -153,7 +154,7 @@ export default function CallLogTable() {
             value={filters.end_date}
             onChange={(e) => handleFilterChange('end_date', e.target.value)}
             placeholder="End date"
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           />
         </div>
 
@@ -162,14 +163,14 @@ export default function CallLogTable() {
           <button
             className={`btn btn-sm ${activeTab === 'leads' ? 'btn-dark' : 'btn-outline-dark'}`}
             onClick={() => setActiveTab('leads')}
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           >
             Leads
           </button>
           <button
             className={`btn btn-sm ${activeTab === 'issues' ? 'btn-dark' : 'btn-outline-dark'}`}
             onClick={() => setActiveTab('issues')}
-            disabled={isAnyLoading}
+            disabled={isControlsDisabled}
           >
             Issues
           </button>
@@ -195,7 +196,7 @@ export default function CallLogTable() {
               value={limit}
               onChange={(e) => setLimit(Number(e.target.value))}
               aria-label="Rows per page"
-              disabled={isAnyLoading}
+              disabled={isControlsDisabled}
             >
               <option value={10}>10 / page</option>
               <option value={25}>25 / page</option>

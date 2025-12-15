@@ -11,7 +11,7 @@ export default function MetricsCards({ startDate, endDate }) {
 
   const metrics = [
     {
-      label: `RANGE ${startDate || '2025-12-01'} — ${endDate || '2025-12-03'}`,
+      label: `RANGE ${endDate || '2025-12-03'}`,
       value: data?.total_calls ?? '--',
       subtitle: 'Total Calls',
       icon: 'bi-telephone',

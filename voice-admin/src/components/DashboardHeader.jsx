@@ -7,7 +7,7 @@ export default function DashboardHeader({ onLogout }) {
             <img src="https://ui-avatars.com/api/?name=Leo+Forger&background=1a2942&color=fff" alt="User" />
           </div>
           <div className="user-details d-none d-md-block">
-            <h6 className="mb-0">Hi,Sara!</h6>
+            {/* <h6 className="mb-0">Hi,Sara!</h6> */}
             <small>Call Center Manager</small>
           </div>
         </div>

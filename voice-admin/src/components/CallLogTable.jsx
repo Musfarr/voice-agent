@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getLeads, getIssues, getFilters } from '../services/api';
 
 export default function CallLogTable() {
   const [activeTab, setActiveTab] = useState('leads');
   const [expandedRow, setExpandedRow] = useState(null);
+  const [limit, setLimit] = useState(10);
+  const [skip, setSkip] = useState(0);
   const [filters, setFilters] = useState({
     status: '',
     industry_type: '',
@@ -13,25 +15,40 @@ export default function CallLogTable() {
     end_date: '',
   });
 
-  const { data: filterOptions } = useQuery({
+  const { data: filtersResponse, isLoading: filtersLoading } = useQuery({
     queryKey: ['filters'],
     queryFn: getFilters,
   });
 
+  const filterOptions = filtersResponse?.data;
+
+  const leadsQueryParams = useMemo(() => ({ ...filters, limit, skip }), [filters, limit, skip]);
+  const issuesQueryParams = useMemo(() => ({ ...filters, limit, skip }), [filters, limit, skip]);
+
   const { data: leadsResponse, isLoading: leadsLoading } = useQuery({
-    queryKey: ['leads', filters],
-    queryFn: () => getLeads(filters),
+    queryKey: ['leads', leadsQueryParams],
+    queryFn: () => getLeads(leadsQueryParams),
     enabled: activeTab === 'leads',
   });
 
   const { data: issuesResponse, isLoading: issuesLoading } = useQuery({
-    queryKey: ['issues', filters],
-    queryFn: () => getIssues(filters),
+    queryKey: ['issues', issuesQueryParams],
+    queryFn: () => getIssues(issuesQueryParams),
     enabled: activeTab === 'issues',
   });
 
   const records = activeTab === 'leads' ? leadsResponse?.data?.records : issuesResponse?.data?.records;
+  const total = activeTab === 'leads' ? leadsResponse?.data?.total : issuesResponse?.data?.total;
   const isLoading = activeTab === 'leads' ? leadsLoading : issuesLoading;
+  const isAnyLoading = filtersLoading || isLoading;
+
+  const currentPage = Math.floor(skip / limit) + 1;
+  const totalPages = total ? Math.max(1, Math.ceil(total / limit)) : 1;
+
+  useEffect(() => {
+    setSkip(0);
+    setExpandedRow(null);
+  }, [activeTab, filters, limit]);
 
   const toggleTranscript = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
@@ -54,12 +71,19 @@ export default function CallLogTable() {
   return (
     <div className="card">
       <div className="card-body">
+        {isAnyLoading && (
+          <div className="api-loading-overlay" aria-label="Loading">
+            <div className="spinner-border text-light" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        )}
         {/* Filters */}
         <div className="d-flex flex-wrap align-items-center gap-3 mb-4">
           <div className="d-flex align-items-center gap-2">
             <i className="bi bi-funnel"></i>
             <span className="fw-medium">Filters</span>
-            <button className="btn btn-sm btn-outline-secondary" onClick={clearFilters}>
+            <button className="btn btn-sm btn-outline-secondary" onClick={clearFilters} disabled={isAnyLoading}>
               Clear
             </button>
           </div>
@@ -69,6 +93,7 @@ export default function CallLogTable() {
             style={{ width: 'auto' }}
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
+            disabled={isAnyLoading}
           >
             <option value="">{activeTab === 'leads' ? 'Lead status' : 'Issue status'}</option>
             {(activeTab === 'leads'
@@ -86,6 +111,7 @@ export default function CallLogTable() {
             style={{ width: 'auto' }}
             value={filters.industry_type}
             onChange={(e) => handleFilterChange('industry_type', e.target.value)}
+            disabled={isAnyLoading}
           >
             <option value="">Industry</option>
             {(filterOptions?.industries || []).map((industry) => (
@@ -100,6 +126,7 @@ export default function CallLogTable() {
             style={{ width: 'auto' }}
             value={filters.organization}
             onChange={(e) => handleFilterChange('organization', e.target.value)}
+            disabled={isAnyLoading}
           >
             <option value="">Organization</option>
             {(filterOptions?.organizations || []).map((org) => (
@@ -116,6 +143,7 @@ export default function CallLogTable() {
             value={filters.start_date}
             onChange={(e) => handleFilterChange('start_date', e.target.value)}
             placeholder="Start date"
+            disabled={isAnyLoading}
           />
 
           <input
@@ -125,6 +153,7 @@ export default function CallLogTable() {
             value={filters.end_date}
             onChange={(e) => handleFilterChange('end_date', e.target.value)}
             placeholder="End date"
+            disabled={isAnyLoading}
           />
         </div>
 
@@ -133,31 +162,83 @@ export default function CallLogTable() {
           <button
             className={`btn btn-sm ${activeTab === 'leads' ? 'btn-dark' : 'btn-outline-dark'}`}
             onClick={() => setActiveTab('leads')}
+            disabled={isAnyLoading}
           >
             Leads
           </button>
           <button
             className={`btn btn-sm ${activeTab === 'issues' ? 'btn-dark' : 'btn-outline-dark'}`}
             onClick={() => setActiveTab('issues')}
+            disabled={isAnyLoading}
           >
             Issues
           </button>
         </div>
 
+        {/* Pagination */}
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <div className="text-muted small">
+            {typeof total === 'number' ? (
+              <>
+                Showing <strong>{Math.min(skip + 1, total)}</strong>–<strong>{Math.min(skip + limit, total)}</strong> of{' '}
+                <strong>{total}</strong>
+              </>
+            ) : (
+              <>Showing results</>
+            )}
+          </div>
+
+          <div className="d-flex align-items-center gap-2">
+            <select
+              className="form-select form-select-sm"
+              style={{ width: 'auto' }}
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              aria-label="Rows per page"
+              disabled={isAnyLoading}
+            >
+              <option value={10}>10 / page</option>
+              <option value={25}>25 / page</option>
+              <option value={50}>50 / page</option>
+              <option value={100}>100 / page</option>
+            </select>
+
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={() => setSkip(Math.max(0, skip - limit))}
+              disabled={skip === 0 || isAnyLoading}
+            >
+              Prev
+            </button>
+
+            <span className="small text-muted">
+              Page <strong>{currentPage}</strong> / <strong>{totalPages}</strong>
+            </span>
+
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={() => setSkip(skip + limit)}
+              disabled={isAnyLoading || (typeof total === 'number' ? skip + limit >= total : false)}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+
         {/* Table */}
         <div className="table-responsive">
-          <table className="table table-hover align-middle">
+          <table className="table table-hover align-middle calllog-table">
             <thead className="table-light">
               <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Organization</th>
-                <th>Industry</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Caller</th>
-                <th>Duration</th>
-                <th>Actions</th>
+                <th className="text-start">Name</th>
+                <th className="text-center">Email</th>
+                <th className="text-center">Organization</th>
+                <th className="text-center">Industry</th>
+                <th className="text-center">Status</th>
+                <th className="text-center">Created At</th>
+                <th className="text-center">Caller</th>
+                <th className="text-center">Duration</th>
+                <th className="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -179,20 +260,20 @@ export default function CallLogTable() {
                 records.map((item, index) => (
                   <React.Fragment key={item.id || index}>
                     <tr>
-                      <td>{item.name || '--'}</td>
-                      <td>{item.email || '--'}</td>
-                      <td>{item.organization || '--'}</td>
-                      <td>{item.industry_type || item.industry || '--'}</td>
-                      <td>
+                      <td className="text-start fw-medium">{item.name || '--'}</td>
+                      <td className="text-center">{item.email || '--'}</td>
+                      <td className="text-center">{item.organization || '--'}</td>
+                      <td className="text-center">{item.industry_type || item.industry || '--'}</td>
+                      <td className="text-center">
                         <span className={`badge bg-${getStatusColor(item.status)}`}>
                           {item.status || '--'}
                         </span>
                       </td>
-                      <td>{item.created_at ? new Date(item.created_at).toLocaleString() : '--'}</td>
-                      <td>{item.caller_numbers || '--'}</td>
-                      <td>{item.call_duration ? `${item.call_duration} min` : '--'}</td>
-                      <td>
-                        <div className="d-flex gap-1">
+                      <td className="text-center">{item.created_at ? new Date(item.created_at).toLocaleString() : '--'}</td>
+                      <td className="text-center">{item.caller_numbers || '--'}</td>
+                      <td className="text-center">{item.call_duration ? `${item.call_duration} min` : '--'}</td>
+                      <td className="text-center">
+                        <div className="d-flex gap-1 justify-content-center">
                           {item.recording_text && (
                             <button
                               className={`btn btn-sm ${expandedRow === item.id ? 'btn-dark' : 'btn-outline-dark'}`}

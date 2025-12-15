@@ -122,7 +122,7 @@ export default function LiveDemo() {
   };
 
   return (
-    <>
+    <div className="container">
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
           <h4 className="mb-1">Live Voice Demo</h4>
@@ -211,6 +211,6 @@ export default function LiveDemo() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

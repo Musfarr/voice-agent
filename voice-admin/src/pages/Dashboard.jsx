@@ -18,7 +18,7 @@ export default function Dashboard({ onLogout }) {
       <div className={`dashboard-main ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         <DashboardHeader onLogout={onLogout} />
 
-        <div className="dashboard-content">
+        <div className="dashboard-content " >
           <div className="px-4 py-4">
             <Outlet />
           </div>

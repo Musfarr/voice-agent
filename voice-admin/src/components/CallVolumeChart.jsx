@@ -78,17 +78,6 @@ export default function CallVolumeChart() {
             <option value={30}>Last 30</option>
           </select>
         </div>
-        <div className="d-flex gap-3 mb-3">
-          <small className="d-flex align-items-center gap-1">
-            <span className="legend-dot" style={{ backgroundColor: '#1a2942' }}></span> Lead Calls
-          </small>
-          <small className="d-flex align-items-center gap-1">
-            <span className="legend-dot" style={{ backgroundColor: '#e57373' }}></span> Issue Calls
-          </small>
-          <small className="d-flex align-items-center gap-1">
-            <span className="legend-dot" style={{ backgroundColor: '#7cb342' }}></span> Total Calls
-          </small>
-        </div>
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ height: 300 }}>
             <div className="spinner-border text-secondary" role="status">

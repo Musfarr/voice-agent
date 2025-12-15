@@ -82,16 +82,6 @@ export default function HourlyAnalyticsChart() {
             Avg Duration
           </button>
         </div>
-        <div className="d-flex gap-3 mb-3">
-          <small className="d-flex align-items-center gap-1">
-            <span className="legend-dot" style={{ backgroundColor: '#1a2942' }}></span> Calls
-          </small>
-          {showDuration && (
-            <small className="d-flex align-items-center gap-1">
-              <span className="legend-dot" style={{ backgroundColor: '#7cb342' }}></span> Avg Duration (min)
-            </small>
-          )}
-        </div>
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ height: 300 }}>
             <div className="spinner-border text-secondary" role="status">

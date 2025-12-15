@@ -1,9 +1,9 @@
 :root {
-  --navy-dark: #1a2942;
-  --navy-light: #2d3e50;
+  --navy-dark: #121c2d;
+  --navy-light: #121c2d;
   --sidebar-width: 240px;
   --sidebar-collapsed-width: 60px;
-  --header-height: 60px;
+  --header-height: 64px;
 }
 
 * {
@@ -90,8 +90,12 @@ body {
   padding: 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
 }
 
 .sidebar-toggle-btn {
@@ -102,6 +106,14 @@ body {
   padding: 8px;
   border-radius: 8px;
   transition: background-color 0.2s;
+}
+
+.sidebar-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
 }
 
 .sidebar-toggle-btn:hover {
@@ -179,6 +191,12 @@ body {
   z-index: 100;
 }
 
+.dashboard-header h6 {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
 .user-avatar img {
   width: 40px;
   height: 40px;
@@ -191,7 +209,7 @@ body {
 }
 
 .user-details small {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .btn-icon {
@@ -218,6 +236,23 @@ body {
   flex: 1;
   background-color: #f8f9fa;
   overflow-y: auto;
+}
+
+/* API Loading Overlay */
+.card-body {
+  position: relative;
+}
+
+.api-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 41, 66, 0.55);
+  border-radius: 12px;
+  z-index: 5;
+  backdrop-filter: blur(1px);
 }
 
 /* Metric Cards */
@@ -258,6 +293,10 @@ body {
   color: var(--navy-dark);
 }
 
+.apexcharts-legend {
+  padding-left: 0 !important;
+}
+
 .legend-dot {
   width: 10px;
   height: 10px;
@@ -268,6 +307,30 @@ body {
 /* Table */
 .table {
   margin-bottom: 0;
+}
+
+.calllog-table {
+  font-size: 0.92rem;
+}
+
+.calllog-table thead th {
+  white-space: nowrap;
+  padding: 14px 14px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.calllog-table tbody td {
+  padding: 14px 14px;
+}
+
+.calllog-table tbody tr:hover {
+  background-color: rgba(26, 41, 66, 0.03);
+}
+
+.calllog-table .badge {
+  font-weight: 600;
+  padding: 6px 10px;
 }
 
 .table th {

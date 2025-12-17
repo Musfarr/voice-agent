@@ -128,7 +128,7 @@ export default function LiveDemo() {
           <h4 className="mb-1">Live Voice Demo</h4>
           <small className="text-muted">Talk to a live calling agent using LiveKit.</small>
         </div>
-        <span className="badge bg-light text-dark px-3 py-2">{status}</span>
+        {/* <span className="badge bg-light text-dark px-3 py-2">{status}</span> */}
       </div>
 
       <div className="row g-4">
@@ -136,15 +136,15 @@ export default function LiveDemo() {
           <div className="card shadow-sm h-100">
             <div className="card-body">
               <div className="d-flex align-items-center justify-content-between">
-                <div>
+                {/* <div>
                   <h5 className="card-title mb-1">Call Controls</h5>
                   <p className="text-muted mb-3">
                     Requests a token from your server at <code>{AGENT_BASE_URL}sessions/create</code>, then connects and publishes your microphone.
                   </p>
-                </div>
-                <span className={`badge ${joined ? 'bg-success' : 'bg-secondary'} px-3 py-2`} aria-label="Call state badge">
+                </div> */}
+                {/* <span className={`badge ${joined ? 'bg-success' : 'bg-secondary'} px-3 py-2`} aria-label="Call state badge">
                   {joined ? 'In Call' : 'Not in Call'}
-                </span>
+                </span> */}
               </div>
 
               {error && (

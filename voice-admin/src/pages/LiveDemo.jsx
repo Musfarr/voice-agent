@@ -126,7 +126,7 @@ export default function LiveDemo() {
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
           <h4 className="mb-1">Live Voice Demo</h4>
-          <small className="text-muted">Talk to a live calling agent using LiveKit.</small>
+          <small className="text-muted">Talk to a live calling agent</small>
         </div>
         {/* <span className="badge bg-light text-dark px-3 py-2">{status}</span> */}
       </div>

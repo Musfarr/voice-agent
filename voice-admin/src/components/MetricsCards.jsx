@@ -17,16 +17,17 @@ export default function MetricsCards({ startDate, endDate }) {
       icon: 'bi-telephone',
       color: 'primary',
     },
+    
     {
-      label: 'FROM LEADS',
-      value: data?.lead_calls ?? '--',
+      label: 'Resolved Queries',
+      value: data?.resolved_queries ?? '--',
       subtitle: 'Lead Calls',
       icon: 'bi-person-plus',
       color: 'info',
     },
     {
-      label: 'FROM ISSUES',
-      value: data?.issue_calls ?? '--',
+      label: 'closed_queries',
+      value: data?.closed_queries ?? '--',
       subtitle: 'Issue Calls',
       icon: 'bi-exclamation-triangle',
       color: 'warning',

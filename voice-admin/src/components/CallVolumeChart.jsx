@@ -11,11 +11,20 @@ export default function CallVolumeChart() {
     queryFn: () => getCallVolume(days),
   });
 
-  const data = response?.data || [];
-  const dates = data.map(item => item.date);
-  const leadCalls = data.map(item => item.lead_calls);
-  const issueCalls = data.map(item => item.issue_calls);
-  const totalCalls = data.map(item => item.total_calls);
+  const data = Array.isArray(response?.data)
+    ? response.data
+    : Array.isArray(response?.data?.data)
+      ? response.data.data
+      : Array.isArray(response?.data?.records)
+        ? response.data.records
+        : [];
+
+  const dates = data.map((item) => item.date ?? item.day ?? '--');
+  const leadCalls = data.map((item) => item.lead_calls ?? item.resolved_queries ?? 0);
+  const issueCalls = data.map((item) => item.issue_calls ?? item.closed_queries ?? 0);
+  const totalCalls = data.map(
+    (item) => item.total_calls ?? item.total_queries ?? (Number(item.lead_calls ?? item.resolved_queries ?? 0) + Number(item.issue_calls ?? item.closed_queries ?? 0))
+  );
 
   const chartOptions = {
     chart: {
@@ -57,8 +66,8 @@ export default function CallVolumeChart() {
   };
 
   const series = [
-    { name: 'Lead Calls', data: leadCalls },
-    { name: 'Issue Calls', data: issueCalls },
+    { name: 'Resolved Queries', data: leadCalls },
+    { name: 'Closed Queries', data: issueCalls },
     { name: 'Total Calls', data: totalCalls },
   ];
 

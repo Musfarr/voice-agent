@@ -14,12 +14,12 @@ export default function DashboardHeader({ onLogout }) {
       </div>
 
       <div className="header-actions d-flex align-items-center gap-2">
-        <button className="btn btn-icon" title="Settings">
+        {/* <button className="btn btn-icon" title="Settings">
           <i className="bi bi-gear"></i>
-        </button>
-        <button className="btn btn-icon" title="Support">
+        </button> */}
+        {/* <button className="btn btn-icon" title="Support">
           <i className="bi bi-headset"></i>
-        </button>
+        </button> */}
         <button className="btn btn-icon" onClick={onLogout} title="Logout">
           <i className="bi bi-box-arrow-right"></i>
         </button>

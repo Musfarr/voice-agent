@@ -10,25 +10,28 @@ export const getDashboardAnalytics = async (startDate, endDate) => {
   const params = {};
   if (startDate) params.start_date = startDate;
   if (endDate) params.end_date = endDate;
+  params.company_name = "Telenor"
   const response = await api.get('api/analytics/dashboard', { params });
   return response.data;
 };
 
 // Call Volume
 export const getCallVolume = async (days = 15) => {
-  const response = await api.get('api/analytics/call-volume', { params: { days } });
+
+  const params = { days, company_name: 'Telenor' };
+  const response = await api.get('api/analytics/call-volume', { params });
   return response.data;
 };
 
 // Hourly Analytics
 export const getHourlyAnalytics = async () => {
-  const response = await api.get('api/analytics/hourly');
+  const response = await api.get('api/analytics/hourly', { params: { company_name: 'Telenor' } });
   return response.data;
 };
 
 // Filters
-export const getFilters = async () => {
-  const response = await api.get('api/filters');
+export const getFilters = async ({ company_name = 'Telenor' } = {}) => {
+  const response = await api.get('api/filters', { params: { company_name } });
   return response.data;
 };
 
@@ -49,6 +52,20 @@ export const getIssues = async ({ status, industry_type, organization, limit = 1
   if (industry_type) params.industry_type = industry_type;
   if (organization) params.organization = organization;
   const response = await api.get('api/data/issues', { params });
+  return response.data;
+};
+
+// User Queries
+export const getUserQueries = async ({ status, city_name, limit = 10000, skip = 0 } = {}) => {
+  const params = {
+    company_name: 'Telenor',
+    limit,
+    skip,
+  };
+  if (status) params.status = status;
+  if (city_name) params.city_name = city_name;
+
+  const response = await api.get('api/data/queries', { params });
   return response.data;
 };
 

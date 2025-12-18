@@ -1,47 +1,31 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getLeads, getIssues, getFilters } from '../services/api';
+import { getUserQueries } from '../services/api';
 
 export default function CallLogTable() {
-  const [activeTab, setActiveTab] = useState('leads');
   const [expandedRow, setExpandedRow] = useState(null);
   const [limit, setLimit] = useState(10);
   const [skip, setSkip] = useState(0);
   const [filters, setFilters] = useState({
     status: '',
-    industry_type: '',
-    organization: '',
-    start_date: '',
-    end_date: '',
+    city_name: '',
   });
 
-  const { data: filtersResponse, isLoading: filtersLoading } = useQuery({
-    queryKey: ['filters'],
-    queryFn: getFilters,
+  const queryParams = useMemo(() => ({ ...filters, limit, skip }), [filters, limit, skip]);
+
+  const { data: userQueriesResponse, isLoading } = useQuery({
+    queryKey: ['userQueries', queryParams],
+    queryFn: () => getUserQueries(queryParams),
   });
 
-  const filterOptions = filtersResponse?.data;
-
-  const leadsQueryParams = useMemo(() => ({ ...filters, limit, skip }), [filters, limit, skip]);
-  const issuesQueryParams = useMemo(() => ({ ...filters, limit, skip }), [filters, limit, skip]);
-
-  const { data: leadsResponse, isLoading: leadsLoading } = useQuery({
-    queryKey: ['leads', leadsQueryParams],
-    queryFn: () => getLeads(leadsQueryParams),
-    enabled: activeTab === 'leads',
-  });
-
-  const { data: issuesResponse, isLoading: issuesLoading } = useQuery({
-    queryKey: ['issues', issuesQueryParams],
-    queryFn: () => getIssues(issuesQueryParams),
-    enabled: activeTab === 'issues',
-  });
-
-  const records = activeTab === 'leads' ? leadsResponse?.data?.records : issuesResponse?.data?.records;
-  const total = activeTab === 'leads' ? leadsResponse?.data?.total : issuesResponse?.data?.total;
-  const isLoading = activeTab === 'leads' ? leadsLoading : issuesLoading;
-  const isAnyLoading = filtersLoading || isLoading;
-  const isControlsDisabled = filtersLoading;
+  const filterOptions = {
+    cities: ['Faisalabad', 'Islamabad', 'Karachi', 'Lahore', 'Multan', 'Rawalpindi'],
+    statuses: ['closed', 'in_progress', 'new', 'resolved'],
+  };
+  const records = userQueriesResponse?.data?.records || [];
+  const total = userQueriesResponse?.data?.total;
+  const isAnyLoading = isLoading;
+  const isControlsDisabled = isLoading;
 
   const currentPage = Math.floor(skip / limit) + 1;
   const totalPages = total ? Math.max(1, Math.ceil(total / limit)) : 1;
@@ -49,7 +33,7 @@ export default function CallLogTable() {
   useEffect(() => {
     setSkip(0);
     setExpandedRow(null);
-  }, [activeTab, filters, limit]);
+  }, [filters, limit]);
 
   const toggleTranscript = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
@@ -58,10 +42,7 @@ export default function CallLogTable() {
   const clearFilters = () => {
     setFilters({
       status: '',
-      industry_type: '',
-      organization: '',
-      start_date: '',
-      end_date: '',
+      city_name: '',
     });
   };
 
@@ -96,11 +77,8 @@ export default function CallLogTable() {
             onChange={(e) => handleFilterChange('status', e.target.value)}
             disabled={isControlsDisabled}
           >
-            <option value="">{activeTab === 'leads' ? 'Lead status' : 'Issue status'}</option>
-            {(activeTab === 'leads'
-              ? filterOptions?.lead_statuses || []
-              : filterOptions?.issue_statuses || []
-            ).map((status) => (
+            <option value="">Status</option>
+            {(filterOptions?.statuses || []).map((status) => (
               <option key={status} value={status}>
                 {status}
               </option>
@@ -110,70 +88,17 @@ export default function CallLogTable() {
           <select
             className="form-select form-select-sm"
             style={{ width: 'auto' }}
-            value={filters.industry_type}
-            onChange={(e) => handleFilterChange('industry_type', e.target.value)}
+            value={filters.city_name}
+            onChange={(e) => handleFilterChange('city_name', e.target.value)}
             disabled={isControlsDisabled}
           >
-            <option value="">Industry</option>
-            {(filterOptions?.industries || []).map((industry) => (
-              <option key={industry} value={industry}>
-                {industry}
+            <option value="">City</option>
+            {(filterOptions?.cities || []).map((city) => (
+              <option key={city} value={city}>
+                {city}
               </option>
             ))}
           </select>
-
-          <select
-            className="form-select form-select-sm"
-            style={{ width: 'auto' }}
-            value={filters.organization}
-            onChange={(e) => handleFilterChange('organization', e.target.value)}
-            disabled={isControlsDisabled}
-          >
-            <option value="">Organization</option>
-            {(filterOptions?.organizations || []).map((org) => (
-              <option key={org} value={org}>
-                {org}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            className="form-control form-control-sm"
-            style={{ width: 'auto' }}
-            value={filters.start_date}
-            onChange={(e) => handleFilterChange('start_date', e.target.value)}
-            placeholder="Start date"
-            disabled={isControlsDisabled}
-          />
-
-          <input
-            type="date"
-            className="form-control form-control-sm"
-            style={{ width: 'auto' }}
-            value={filters.end_date}
-            onChange={(e) => handleFilterChange('end_date', e.target.value)}
-            placeholder="End date"
-            disabled={isControlsDisabled}
-          />
-        </div>
-
-        {/* Tabs */}
-        <div className="d-flex gap-2 mb-3">
-          <button
-            className={`btn btn-sm ${activeTab === 'leads' ? 'btn-dark' : 'btn-outline-dark'}`}
-            onClick={() => setActiveTab('leads')}
-            disabled={isControlsDisabled}
-          >
-            Leads
-          </button>
-          <button
-            className={`btn btn-sm ${activeTab === 'issues' ? 'btn-dark' : 'btn-outline-dark'}`}
-            onClick={() => setActiveTab('issues')}
-            disabled={isControlsDisabled}
-          >
-            Issues
-          </button>
         </div>
 
         {/* Pagination */}
@@ -233,19 +158,18 @@ export default function CallLogTable() {
               <tr>
                 <th className="text-start">Name</th>
                 <th className="text-center">Email</th>
-                <th className="text-center">Organization</th>
-                <th className="text-center">Industry</th>
+                <th className="text-center">City</th>
                 <th className="text-center">Status</th>
+                <th className="text-center">User Query</th>
+                <th className="text-center">Sentiment</th>
                 <th className="text-center">Created At</th>
-                <th className="text-center">Caller</th>
-                <th className="text-center">Duration</th>
                 <th className="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-4">
+                  <td colSpan="8" className="text-center py-4">
                     <div className="spinner-border text-secondary" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>
@@ -253,7 +177,7 @@ export default function CallLogTable() {
                 </tr>
               ) : !records?.length ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-4 text-muted">
+                  <td colSpan="8" className="text-center py-4 text-muted">
                     No data available
                   </td>
                 </tr>
@@ -263,22 +187,23 @@ export default function CallLogTable() {
                     <tr>
                       <td className="text-start fw-medium">{item.name || '--'}</td>
                       <td className="text-center">{item.email || '--'}</td>
-                      <td className="text-center">{item.organization || '--'}</td>
-                      <td className="text-center">{item.industry_type || item.industry || '--'}</td>
+                      <td className="text-center">{item.city_name || item.city || '--'}</td>
                       <td className="text-center">
                         <span className={`badge bg-${getStatusColor(item.status)}`}>
                           {item.status || '--'}
                         </span>
                       </td>
+                      <td className="text-center text-truncate" style={{ maxWidth: 200 }} title={item.user_query || '--'}>
+                        {item.user_query || '--'}
+                      </td>
+                      <td className="text-center">{item.customer_sentiment || '--'}</td>
                       <td className="text-center">{item.created_at ? new Date(item.created_at).toLocaleString() : '--'}</td>
-                      <td className="text-center">{item.caller_numbers || '--'}</td>
-                      <td className="text-center">{item.call_duration ? `${item.call_duration} min` : '--'}</td>
                       <td className="text-center">
                         <div className="d-flex gap-1 justify-content-center">
-                          {item.recording_text && (
+                          {(item.recording_text || item.summary) && (
                             <button
                               className={`btn btn-sm ${expandedRow === item.id ? 'btn-dark' : 'btn-outline-dark'}`}
-                              title="View transcript"
+                              title="View transcript & summary"
                               onClick={() => toggleTranscript(item.id)}
                             >
                               <i className="bi bi-chat-text"></i>
@@ -298,22 +223,33 @@ export default function CallLogTable() {
                         </div>
                       </td>
                     </tr>
-                    {expandedRow === item.id && item.recording_text && (
+                    {expandedRow === item.id && (item.recording_text || item.summary) && (
                       <tr key={`transcript-${item.id}`} className="transcript-row">
-                        <td colSpan="9" className="bg-light p-3">
+                        <td colSpan="8" className="bg-light p-3">
                           <div className="transcript-content">
                             <h6 className="mb-2 d-flex align-items-center gap-2">
                               <i className="bi bi-chat-quote"></i> Call Transcript
                             </h6>
-                            <div className="transcript-text p-3 bg-white rounded border">
-                              {item.recording_text.split('\n').map((line, i) => (
-                                <p key={i} className={`mb-2 ${line.startsWith('Caller:') ? 'text-primary' : line.startsWith('Agent:') ? 'text-success' : ''}`}>
-                                  {line.startsWith('Caller:') && <strong>Caller: </strong>}
-                                  {line.startsWith('Agent:') && <strong>Agent: </strong>}
-                                  {line.replace(/^(Caller:|Agent:)\s*/, '')}
-                                </p>
-                              ))}
-                            </div>
+                            {item.recording_text && (
+                              <div className="transcript-text p-3 bg-white rounded border mb-3">
+                                {item.recording_text.split('\n').map((line, i) => (
+                                  <p key={i} className={`mb-2 ${line.startsWith('Caller:') ? 'text-primary' : line.startsWith('Agent:') ? 'text-success' : ''}`}>
+                                    {line.startsWith('Caller:') && <strong>Caller: </strong>}
+                                    {line.startsWith('Agent:') && <strong>Agent: </strong>}
+                                    {line.replace(/^(Caller:|Agent:)\s*/, '')}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+
+                            {item.summary && (
+                              <div className="transcript-text p-3 bg-white rounded border">
+                                <h6 className="mb-2 d-flex align-items-center gap-2">
+                                  <i className="bi bi-card-text"></i> Summary
+                                </h6>
+                                <p className="mb-0">{item.summary}</p>
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>

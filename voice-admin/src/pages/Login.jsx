@@ -61,7 +61,7 @@ export default function Login({ onLogin }) {
                 </form>
 
                 <div className="text-center mt-3">
-                  <small className="text-muted">Demo: Use any credentials to login</small>
+                  <small className="text-muted">Powered by Convex Interactive</small>
                 </div>
               </div>
             </div>
